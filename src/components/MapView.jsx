@@ -139,7 +139,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         // Soldier.glb (Three.js examples) を読み込む
         const loader = new GLTFLoader();
         loader.load(
-          '/Soldier.glb',
+          `${import.meta.env.BASE_URL}Soldier.glb`,
           (gltf) => {
             ls.character = gltf.scene;
             this._scene.add(gltf.scene);
@@ -252,12 +252,12 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
     map.on('style.load', () => {
       // PLATEAU GeoJSON があれば使用、なければ OSM ビルディング
       // キャラクターは建物の後に追加して必ず上に描画されるようにする
-      fetch('/plateau-buildings.geojson', { method: 'HEAD' })
+      fetch(`${import.meta.env.BASE_URL}plateau-buildings.geojson`, { method: 'HEAD' })
         .then((r) => {
           if (r.ok) {
             map.addSource('plateau-buildings', {
               type: 'geojson',
-              data: '/plateau-buildings.geojson',
+              data: `${import.meta.env.BASE_URL}plateau-buildings.geojson`,
             });
             addBuildingLayer(map, 'plateau-buildings');
           } else {
@@ -267,7 +267,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         .catch(() => addOsmBuildings(map))
         .finally(() => {
           // 警察署・交番を赤色で表示
-          map.addSource('police-buildings', { type: 'geojson', data: '/police-buildings.geojson' });
+          map.addSource('police-buildings', { type: 'geojson', data: `${import.meta.env.BASE_URL}police-buildings.geojson` });
           map.addLayer({
             id: 'police-3d', type: 'fill-extrusion', source: 'police-buildings',
             paint: {
