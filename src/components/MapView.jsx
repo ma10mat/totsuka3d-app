@@ -146,15 +146,35 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
               if (!child.isMesh) return;
               child.material = child.material.clone();
               if (child.name === 'vanguard_visor') {
-                // バイザー: 初号機の目・センサー → 黄緑
                 child.material.color.set(0x99ff00);
                 child.material.emissive.set(0x44aa00);
                 child.material.emissiveIntensity = 0.8;
               } else {
-                // ボディ: 初号機カラー → 濃い紫
+                // ボディ: 紫ベース、腕(6-40)・腰(0-2)をシェーダーで黄緑に
                 child.material.color.set(0x4a0080);
                 child.material.emissive.set(0x1a0033);
                 child.material.emissiveIntensity = 0.3;
+                child.material.onBeforeCompile = (shader) => {
+                  shader.vertexShader = shader.vertexShader
+                    .replace(
+                      '#include <skinning_pars_vertex>',
+                      `#include <skinning_pars_vertex>\nvarying float vDomBone;`
+                    )
+                    .replace(
+                      '#include <skinbase_vertex>',
+                      `#include <skinbase_vertex>
+                      { float mw=max(max(skinWeight.x,skinWeight.y),max(skinWeight.z,skinWeight.w));
+                        vDomBone=(skinWeight.x>=mw)?skinIndex.x:(skinWeight.y>=mw)?skinIndex.y:(skinWeight.z>=mw)?skinIndex.z:skinIndex.w; }`
+                    );
+                  shader.fragmentShader = shader.fragmentShader
+                    .replace('void main() {', 'varying float vDomBone;\nvoid main() {')
+                    .replace(
+                      '#include <color_fragment>',
+                      `#include <color_fragment>
+                      { int b=int(vDomBone);
+                        if(b<=2||(b>=6&&b<=40)) diffuseColor.rgb=vec3(0.6,1.0,0.0); }`
+                    );
+                };
               }
             });
             this._scene.add(gltf.scene);
@@ -238,7 +258,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         const mc = maplibregl.MercatorCoordinate.fromLngLat(
           [center.lng, center.lat], ls.jumpHeight
         );
-        const scale = mc.meterInMercatorCoordinateUnits() * 23; // ~40m (1.75m × 23)
+        const scale = mc.meterInMercatorCoordinateUnits() * 11; // ~20m (1.75m × 11)
 
         // MapLibre公式パターン: translate → scale(Y反転) → rotateX(π/2)でThree.js Y軸を高度軸に合わせる
         const modelMat = new THREE.Matrix4()
