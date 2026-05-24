@@ -210,7 +210,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         // ジャンプ高さ更新
         if (ls.isJumping) {
           const t = (performance.now() - ls.jumpStart) / 700;
-          ls.jumpHeight = t < 1 ? Math.sin(t * Math.PI) * 5 : 0;
+          ls.jumpHeight = t < 1 ? Math.sin(t * Math.PI) * 15 : 0;
           if (t >= 1) ls.isJumping = false;
         }
 
@@ -226,7 +226,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         const mc = maplibregl.MercatorCoordinate.fromLngLat(
           [center.lng, center.lat], ls.jumpHeight
         );
-        const scale = mc.meterInMercatorCoordinateUnits() * 3;
+        const scale = mc.meterInMercatorCoordinateUnits() * 5;
 
         // MapLibre公式パターン: translate → scale(Y反転) → rotateX(π/2)でThree.js Y軸を高度軸に合わせる
         const modelMat = new THREE.Matrix4()
