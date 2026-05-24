@@ -134,7 +134,7 @@ export default function App() {
 
       {/* 上部: タイトルバー */}
       <div style={styles.topBar}>
-        <span style={styles.title}>新宿3D探索</span>
+        <span style={styles.title}>戸塚3D探索</span>
         <button style={styles.spotBtn} onClick={() => setShowSpots(v => !v)}>
           📍 {activeSpot.name}
         </button>
