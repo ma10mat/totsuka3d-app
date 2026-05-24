@@ -81,6 +81,9 @@ export default function App() {
     charControls.current?.jump();
   }, []);
 
+  const handleZoomIn  = useCallback(() => { mapRef.current?.zoomIn();  }, []);
+  const handleZoomOut = useCallback(() => { mapRef.current?.zoomOut(); }, []);
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
 
@@ -112,6 +115,12 @@ export default function App() {
 
       {/* 住所検索 */}
       <AddressSearch onSearch={handleAddressSearch} loading={loadingAddr} />
+
+      {/* ズームボタン (右下、ジャンプの上) */}
+      <div style={styles.zoomGroup}>
+        <button style={styles.zoomBtn} onPointerDown={handleZoomIn}>＋</button>
+        <button style={styles.zoomBtn} onPointerDown={handleZoomOut}>－</button>
+      </div>
 
       {/* ジャンプボタン (右下) */}
       <button style={styles.jumpBtn} onPointerDown={handleJump}>
@@ -185,6 +194,30 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     lineHeight: 1.2,
+  },
+  zoomGroup: {
+    position: 'absolute',
+    bottom: 148,
+    right: 24,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    zIndex: 20,
+  },
+  zoomBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    background: 'rgba(255,255,255,0.2)',
+    backdropFilter: 'blur(4px)',
+    border: '2px solid rgba(255,255,255,0.5)',
+    color: '#fff',
+    fontSize: 22,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
   },
   hint: {
     position: 'absolute',
