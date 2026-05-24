@@ -30,7 +30,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
       container:  containerRef.current,
       style:      'https://tiles.openfreemap.org/styles/liberty',
       center:     initialSpot.center,
-      zoom:       17.5,
+      zoom:       5,
       pitch:      70,
       bearing:    initialSpot.bearing,
       antialias:  false,

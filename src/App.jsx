@@ -49,7 +49,7 @@ export default function App() {
       center:  spot.center,
       bearing: spot.bearing,
       pitch:   70,
-      zoom:    17.5,
+      zoom:    17.5, // スポット移動時は街歩きズームに戻す
       duration: 2000,
     });
   }, []);
