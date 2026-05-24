@@ -112,7 +112,9 @@ export default function App() {
       );
       const data = await res.json();
       const r    = data.results;
-      setCurrentAddress(r ? `${muniName(r.muniCd)}${r.lv01Nm ?? ''}` : '住所不明');
+      setCurrentAddress(r
+        ? `${muniName(r.muniCd)}${r.lv01Nm ?? ''}${r.lv02Nm ? r.lv02Nm + '番' : ''}${r.lv03Nm ? r.lv03Nm + '号' : ''}`
+        : '住所不明');
     } catch {
       setCurrentAddress('住所取得失敗');
     }
