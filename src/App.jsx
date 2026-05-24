@@ -15,6 +15,19 @@ export const SPOTS = [
   { id: 'shimo3',     name: '下落合三丁目駐在所',   center: [139.7043, 35.7203], bearing: 0   },
 ];
 
+// GSI muniCd (5桁) → 市区町村名
+function muniName(code) {
+  const pref = { '13':'東京都','14':'神奈川県','11':'埼玉県','12':'千葉県' };
+  const ward = {
+    '13101':'千代田区','13102':'中央区','13103':'港区','13104':'新宿区',
+    '13105':'文京区','13106':'台東区','13107':'墨田区','13108':'江東区',
+    '13109':'品川区','13110':'目黒区','13111':'大田区','13112':'世田谷区',
+    '13113':'渋谷区','13114':'中野区','13115':'杉並区','13116':'豊島区',
+    '13117':'北区','13118':'荒川区','13119':'板橋区','13120':'練馬区',
+    '13121':'足立区','13122':'葛飾区','13123':'江戸川区',
+  };
+  return (ward[code] ?? pref[code?.slice(0,2)] ?? '') + ' ';
+}
 
 export default function App() {
   const mapRef       = useRef(null); // MapLibre インスタンス
@@ -95,15 +108,13 @@ export default function App() {
     const { lng, lat } = map.getCenter();
     try {
       const res  = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ja&zoom=18`,
-        { headers: { 'User-Agent': 'totsuka3d-app' } }
+        `https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=${lat}&lon=${lng}`
       );
       const data = await res.json();
-      const a    = data.address || {};
-      const city = a.city || a.town || a.county || '';
-      const area = a.neighbourhood || a.quarter || a.suburb || '';
-      const num  = a.house_number || '';
-      setCurrentAddress([city, area, num].filter(Boolean).join(' ') || '住所不明');
+      const r    = data.results;
+      setCurrentAddress(r
+        ? `${muniName(r.muniCd)}${r.lv01Nm ?? ''}${r.lv02Nm ? r.lv02Nm + '番' : ''}${r.lv03Nm ? r.lv03Nm + '号' : ''}`
+        : '住所不明');
     } catch {
       setCurrentAddress('住所取得失敗');
     }
