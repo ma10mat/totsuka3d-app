@@ -6,7 +6,7 @@ import SpotSelector from './components/SpotSelector';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [
-  { id: 'totsuka', name: '戸塚警察署前', center: [139.7197, 35.7063], bearing: 180 },
+  { id: 'totsuka', name: '戸塚警察署前', center: [139.7113, 35.7134], bearing: 180 },
   { id: 'waseda',  name: '早稲田大学',   center: [139.7194, 35.7090], bearing: 0   },
   { id: 'kabuki',  name: '歌舞伎町',     center: [139.7044, 35.6958], bearing: -30 },
   { id: 'station', name: '新宿駅',       center: [139.7004, 35.6896], bearing: 0   },

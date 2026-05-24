@@ -55,7 +55,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
       if (dr) m.setBearing(m.getBearing() + dr);
 
       // 前後移動
-      let fwd = -joy.y;
+      let fwd = joy.y;
       if (keys.has('w') || keys.has('W') || keys.has('ArrowUp'))   fwd += 1;
       if (keys.has('s') || keys.has('S') || keys.has('ArrowDown'))  fwd -= 1;
       if (fwd !== 0) {
@@ -232,8 +232,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
           .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2));
 
         if (ls.character) {
-          // ベアリング方向に向ける (後ろ向き補正 +180°)
-          ls.character.rotation.y = -(m.getBearing() + 180) * Math.PI / 180;
+          ls.character.rotation.y = -m.getBearing() * Math.PI / 180;
         }
 
         this._camera.projectionMatrix = new THREE.Matrix4()
@@ -267,6 +266,22 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         })
         .catch(() => addOsmBuildings(map))
         .finally(() => {
+          // 警察署・交番を赤色で表示
+          map.addSource('police-buildings', {
+            type: 'geojson',
+            data: '/police-buildings.geojson',
+          });
+          map.addLayer({
+            id:   'police-3d',
+            type: 'fill-extrusion',
+            source: 'police-buildings',
+            paint: {
+              'fill-extrusion-color':   '#cc2200',
+              'fill-extrusion-height':  ['get', 'height'],
+              'fill-extrusion-base':    0,
+              'fill-extrusion-opacity': 0.95,
+            },
+          });
           // 建物レイヤー追加完了後にキャラクターレイヤーを追加
           map.addLayer(layer);
           onMapReady(map);
