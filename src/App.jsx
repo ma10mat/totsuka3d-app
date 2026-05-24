@@ -100,28 +100,23 @@ export default function App() {
   const handleZoomIn  = useCallback(() => { mapRef.current?.zoomIn();  }, []);
   const handleZoomOut = useCallback(() => { mapRef.current?.zoomOut(); }, []);
 
-  const handleLocate = useCallback(() => {
-    if (!navigator.geolocation) { alert('位置情報未対応のブラウザです'); return; }
+  const handleLocate = useCallback(async () => {
+    const map = mapRef.current;
+    if (!map) return;
     setLocating(true);
     setCurrentAddress(null);
-    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
-      const { latitude: lat, longitude: lon } = coords;
-      mapRef.current?.flyTo({ center: [lon, lat], zoom: 19 });
-      try {
-        const res  = await fetch(
-          `https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=${lat}&lon=${lon}`
-        );
-        const data = await res.json();
-        const r    = data.results;
-        setCurrentAddress(r ? `${r.muniCd ? muniName(r.muniCd) : ''}${r.lv01Nm ?? ''}` : '住所不明');
-      } catch {
-        setCurrentAddress('住所取得失敗');
-      }
-      setLocating(false);
-    }, () => {
-      alert('位置情報の取得を許可してください');
-      setLocating(false);
-    });
+    const { lng, lat } = map.getCenter();
+    try {
+      const res  = await fetch(
+        `https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=${lat}&lon=${lng}`
+      );
+      const data = await res.json();
+      const r    = data.results;
+      setCurrentAddress(r ? `${muniName(r.muniCd)}${r.lv01Nm ?? ''}` : '住所不明');
+    } catch {
+      setCurrentAddress('住所取得失敗');
+    }
+    setLocating(false);
   }, []);
 
   return (
@@ -156,7 +151,7 @@ export default function App() {
       {/* 現在位置ボタン＋住所表示 (左上) */}
       <div style={styles.locateBox}>
         <button style={styles.locateBtn} onClick={handleLocate} disabled={locating}>
-          {locating ? '取得中…' : '📍 現在地'}
+          {locating ? '取得中…' : '📍 住所確認'}
         </button>
         {currentAddress && (
           <span style={styles.locateAddr}>{currentAddress}</span>
