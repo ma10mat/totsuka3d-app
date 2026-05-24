@@ -225,12 +225,11 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         );
         const scale = mc.meterInMercatorCoordinateUnits();
 
-        // compose() を使うことでスケールが位置ベクトルに乗算されない
-        const modelMat = new THREE.Matrix4().compose(
-          new THREE.Vector3(mc.x, mc.y, mc.z),
-          new THREE.Quaternion(),
-          new THREE.Vector3(scale, -scale, scale),
-        );
+        // MapLibre公式パターン: translate → scale(Y反転) → rotateX(π/2)でThree.js Y軸を高度軸に合わせる
+        const modelMat = new THREE.Matrix4()
+          .makeTranslation(mc.x, mc.y, mc.z)
+          .scale(new THREE.Vector3(scale, -scale, scale))
+          .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2));
 
         if (ls.character) {
           // ベアリング方向に向ける (後ろ向き補正 +180°)
