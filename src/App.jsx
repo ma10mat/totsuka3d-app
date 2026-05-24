@@ -6,12 +6,13 @@ import SpotSelector from './components/SpotSelector';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [
-  { id: 'totsuka', name: '戸塚警察署前', center: [139.7113, 35.7134], bearing: 180 },
-  { id: 'waseda',  name: '早稲田大学',   center: [139.7194, 35.7090], bearing: 0   },
-  { id: 'kabuki',  name: '歌舞伎町',     center: [139.7044, 35.6958], bearing: -30 },
-  { id: 'station', name: '新宿駅',       center: [139.7004, 35.6896], bearing: 0   },
-  { id: 'tochomae',name: '東京都庁',     center: [139.6917, 35.6896], bearing: 30  },
-  { id: 'gyoen',   name: '新宿御苑',     center: [139.7103, 35.6860], bearing: 90  },
+  { id: 'totsuka',    name: '警視庁戸塚警察署',     center: [139.7113, 35.7134], bearing: 180 },
+  { id: 'takadanobaba', name: '高田馬場駅前交番',   center: [139.7043, 35.7129], bearing: 0   },
+  { id: 'totsuka1',   name: '戸塚一丁目交番',       center: [139.7189, 35.7120], bearing: 0   },
+  { id: 'shimo-mae',  name: '下落合駅前交番',       center: [139.6945, 35.7170], bearing: 0   },
+  { id: 'naka',       name: '中落合交番',           center: [139.6852, 35.7205], bearing: 0   },
+  { id: 'nishi',      name: '西落合交番',           center: [139.6795, 35.7231], bearing: 0   },
+  { id: 'shimo3',     name: '下落合三丁目駐在所',   center: [139.7043, 35.7203], bearing: 0   },
 ];
 
 export default function App() {
