@@ -143,7 +143,19 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
           (gltf) => {
             ls.character = gltf.scene;
             gltf.scene.traverse((child) => {
-              if (child.isMesh) child.material.color.set(0xcc0000);
+              if (!child.isMesh) return;
+              child.material = child.material.clone();
+              if (child.name === 'vanguard_visor') {
+                // バイザー: 初号機の目・センサー → 黄緑
+                child.material.color.set(0x99ff00);
+                child.material.emissive.set(0x44aa00);
+                child.material.emissiveIntensity = 0.8;
+              } else {
+                // ボディ: 初号機カラー → 濃い紫
+                child.material.color.set(0x4a0080);
+                child.material.emissive.set(0x1a0033);
+                child.material.emissiveIntensity = 0.3;
+              }
             });
             this._scene.add(gltf.scene);
 
