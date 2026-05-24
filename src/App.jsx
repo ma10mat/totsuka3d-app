@@ -6,7 +6,7 @@ import SpotSelector from './components/SpotSelector';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [
-  { id: 'totsuka',    name: '警視庁戸塚警察署',     center: [139.7113, 35.7134], bearing: 180 },
+  { id: 'totsuka',    name: '警視庁戸塚警察署',     center: [139.7106, 35.7133], bearing: 90  },
   { id: 'takadanobaba', name: '高田馬場駅前交番',   center: [139.7043, 35.7129], bearing: 0   },
   { id: 'totsuka1',   name: '戸塚一丁目交番',       center: [139.7189, 35.7120], bearing: 0   },
   { id: 'shimo-mae',  name: '下落合駅前交番',       center: [139.6945, 35.7170], bearing: 0   },
@@ -49,7 +49,7 @@ export default function App() {
       center:  spot.center,
       bearing: spot.bearing,
       pitch:   70,
-      zoom:    17.5, // スポット移動時は街歩きズームに戻す
+      zoom:    19,
       duration: 2000,
     });
   }, []);

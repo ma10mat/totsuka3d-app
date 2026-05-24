@@ -7,15 +7,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 const MOVE_SPEED = 0.000020; // ~2m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
 
-// 建物の高さに応じた色グラデーション
+// 建物の高さに応じた水色グラデーション
 const BUILDING_COLOR = [
   'interpolate', ['linear'],
   ['coalesce', ['get', 'height'], 10],
-  0,   '#c8cdd4',
-  20,  '#b0bec5',
-  50,  '#90a4ae',
-  100, '#6d8fa8',
-  200, '#4a6e8a',
+  0,   '#b8dde8',
+  20,  '#96ccd9',
+  50,  '#72b8cc',
+  100, '#50a0b8',
+  200, '#3585a0',
 ];
 
 export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady }) {
@@ -30,7 +30,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
       container:  containerRef.current,
       style:      'https://tiles.openfreemap.org/styles/liberty',
       center:     initialSpot.center,
-      zoom:       20,
+      zoom:       19,
       pitch:      70,
       bearing:    initialSpot.bearing,
       antialias:  false,
@@ -315,7 +315,7 @@ function addBuildingLayer(map, source) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.92,
+      'fill-extrusion-opacity': 0.5,
     },
   }, firstLabel);
 }
@@ -342,7 +342,7 @@ function addOsmBuildings(map) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'render_height'], ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.88,
+      'fill-extrusion-opacity': 0.5,
     },
   }, firstLabel);
 }
