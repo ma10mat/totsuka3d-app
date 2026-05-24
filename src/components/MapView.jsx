@@ -18,7 +18,7 @@ const BUILDING_COLOR = [
   200, '#ff8c00',
 ];
 
-export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady }) {
+export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady, onBuildingClick }) {
   const containerRef = useRef(null);
   const mapRef       = useRef(null);
   const keysRef      = useRef(new Set());
@@ -326,6 +326,14 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
               'fill-extrusion-opacity': 0.95,
             },
           });
+          // 施設タップ → 情報表示
+          map.on('click', 'police-3d', (e) => {
+            const p = e.features[0]?.properties;
+            if (p?.name && onBuildingClick) onBuildingClick({ name: p.name, address: p.address });
+          });
+          map.on('mouseenter', 'police-3d', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'police-3d', () => { map.getCanvas().style.cursor = ''; });
+
           // 建物レイヤー追加完了後にキャラクターレイヤーを追加
           map.addLayer(layer);
           onMapReady(map);

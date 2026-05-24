@@ -34,6 +34,7 @@ export default function App() {
   const charControls = useRef(null); // { setWalking, jump }
   const joystickRef  = useRef({ x: 0, y: 0 }); // ジョイスティック現在値
 
+  const [buildingInfo, setBuildingInfo] = useState(null);
   const [showSpots, setShowSpots] = useState(false);
   const [activeSpot, setActiveSpot] = useState(SPOTS[0]);
   const [loadingAddr, setLoadingAddr] = useState(false);
@@ -130,6 +131,7 @@ export default function App() {
         joystickRef={joystickRef}
         onMapReady={handleMapReady}
         onCharacterReady={handleCharacterReady}
+        onBuildingClick={setBuildingInfo}
       />
 
       {/* 上部: タイトルバー */}
@@ -178,6 +180,17 @@ export default function App() {
       <div style={styles.joystickWrapper}>
         <Joystick onMove={handleJoystickMove} />
       </div>
+
+      {/* 施設情報カード */}
+      {buildingInfo && (
+        <div style={styles.infoCard}>
+          <div style={styles.infoCardInner}>
+            <div style={styles.infoName}>{buildingInfo.name}</div>
+            <div style={styles.infoAddr}>{buildingInfo.address}</div>
+          </div>
+          <button style={styles.infoClose} onClick={() => setBuildingInfo(null)}>✕</button>
+        </div>
+      )}
 
       {/* PC 向け操作説明 */}
       <div style={styles.hint}>
@@ -305,5 +318,46 @@ const styles = {
     pointerEvents: 'none',
     zIndex: 10,
     whiteSpace: 'nowrap',
+  },
+  infoCard: {
+    position: 'absolute',
+    bottom: 36,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    background: 'rgba(180,0,0,0.85)',
+    backdropFilter: 'blur(6px)',
+    border: '1px solid rgba(255,100,100,0.5)',
+    borderRadius: 12,
+    padding: '10px 14px',
+    zIndex: 30,
+    maxWidth: '90vw',
+  },
+  infoCardInner: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 2,
+  },
+  infoName: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    whiteSpace: 'nowrap',
+  },
+  infoAddr: {
+    color: 'rgba(255,220,220,0.9)',
+    fontSize: 12,
+    whiteSpace: 'nowrap',
+  },
+  infoClose: {
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 16,
+    cursor: 'pointer',
+    padding: '0 4px',
+    lineHeight: 1,
   },
 };
