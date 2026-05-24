@@ -7,15 +7,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 const MOVE_SPEED = 0.000010; // ~1m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
 
-// 建物の高さに応じた水色グラデーション
+// 建物の高さに応じた黄色グラデーション
 const BUILDING_COLOR = [
   'interpolate', ['linear'],
   ['coalesce', ['get', 'height'], 10],
-  0,   '#b8dde8',
-  20,  '#96ccd9',
-  50,  '#72b8cc',
-  100, '#50a0b8',
-  200, '#3585a0',
+  0,   '#ffe066',
+  20,  '#ffd700',
+  50,  '#ffc200',
+  100, '#ffaa00',
+  200, '#ff8c00',
 ];
 
 export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady }) {
@@ -250,6 +250,20 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
 
     // ---- スタイル読み込み後に建物→キャラクター の順で追加 ----
     map.on('style.load', () => {
+      // 背景を黒・地面を半透明紺色に
+      map.getStyle().layers.forEach((l) => {
+        if (l.type === 'background') {
+          map.setPaintProperty(l.id, 'background-color', '#000000');
+          map.setPaintProperty(l.id, 'background-opacity', 1);
+        } else if (l.type === 'fill') {
+          const id = l.id.toLowerCase();
+          if (!id.includes('water') && !id.includes('ocean') && !id.includes('building')) {
+            map.setPaintProperty(l.id, 'fill-color', '#0d1b4b');
+            map.setPaintProperty(l.id, 'fill-opacity', 0.7);
+          }
+        }
+      });
+
       // PLATEAU GeoJSON があれば使用、なければ OSM ビルディング
       // キャラクターは建物の後に追加して必ず上に描画されるようにする
       fetch(`${import.meta.env.BASE_URL}plateau-buildings.geojson`, { method: 'HEAD' })
@@ -296,7 +310,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
   return (
     <div
       ref={containerRef}
-      style={{ position: 'absolute', inset: 0 }}
+      style={{ position: 'absolute', inset: 0, background: '#000' }}
     />
   );
 }
