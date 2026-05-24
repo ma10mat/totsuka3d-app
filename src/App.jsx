@@ -15,6 +15,20 @@ export const SPOTS = [
   { id: 'shimo3',     name: '下落合三丁目駐在所',   center: [139.7043, 35.7203], bearing: 0   },
 ];
 
+// GSI muniCd (5桁) → 市区町村名
+function muniName(code) {
+  const pref = { '13':'東京都','14':'神奈川県','11':'埼玉県','12':'千葉県' };
+  const ward = {
+    '13101':'千代田区','13102':'中央区','13103':'港区','13104':'新宿区',
+    '13105':'文京区','13106':'台東区','13107':'墨田区','13108':'江東区',
+    '13109':'品川区','13110':'目黒区','13111':'大田区','13112':'世田谷区',
+    '13113':'渋谷区','13114':'中野区','13115':'杉並区','13116':'豊島区',
+    '13117':'北区','13118':'荒川区','13119':'板橋区','13120':'練馬区',
+    '13121':'足立区','13122':'葛飾区','13123':'江戸川区',
+  };
+  return (ward[code] ?? pref[code?.slice(0,2)] ?? '') + ' ';
+}
+
 export default function App() {
   const mapRef       = useRef(null); // MapLibre インスタンス
   const charControls = useRef(null); // { setWalking, jump }
@@ -23,6 +37,8 @@ export default function App() {
   const [showSpots, setShowSpots] = useState(false);
   const [activeSpot, setActiveSpot] = useState(SPOTS[0]);
   const [loadingAddr, setLoadingAddr] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState(null);
+  const [locating, setLocating] = useState(false);
 
   // ジョイスティック状態を共有参照に書き込む (再レンダリング不要)
   const handleJoystickMove = useCallback(({ x, y }) => {
@@ -84,6 +100,30 @@ export default function App() {
   const handleZoomIn  = useCallback(() => { mapRef.current?.zoomIn();  }, []);
   const handleZoomOut = useCallback(() => { mapRef.current?.zoomOut(); }, []);
 
+  const handleLocate = useCallback(() => {
+    if (!navigator.geolocation) { alert('位置情報未対応のブラウザです'); return; }
+    setLocating(true);
+    setCurrentAddress(null);
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const { latitude: lat, longitude: lon } = coords;
+      mapRef.current?.flyTo({ center: [lon, lat], zoom: 19 });
+      try {
+        const res  = await fetch(
+          `https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=${lat}&lon=${lon}`
+        );
+        const data = await res.json();
+        const r    = data.results;
+        setCurrentAddress(r ? `${r.muniCd ? muniName(r.muniCd) : ''}${r.lv01Nm ?? ''}` : '住所不明');
+      } catch {
+        setCurrentAddress('住所取得失敗');
+      }
+      setLocating(false);
+    }, () => {
+      alert('位置情報の取得を許可してください');
+      setLocating(false);
+    });
+  }, []);
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
 
@@ -112,6 +152,16 @@ export default function App() {
           onClose={() => setShowSpots(false)}
         />
       )}
+
+      {/* 現在位置ボタン＋住所表示 (左上) */}
+      <div style={styles.locateBox}>
+        <button style={styles.locateBtn} onClick={handleLocate} disabled={locating}>
+          {locating ? '取得中…' : '📍 現在地'}
+        </button>
+        {currentAddress && (
+          <span style={styles.locateAddr}>{currentAddress}</span>
+        )}
+      </div>
 
       {/* 住所検索 */}
       <AddressSearch onSearch={handleAddressSearch} loading={loadingAddr} />
@@ -194,6 +244,35 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     lineHeight: 1.2,
+  },
+  locateBox: {
+    position: 'absolute',
+    top: 52,
+    left: 12,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    zIndex: 20,
+  },
+  locateBtn: {
+    padding: '6px 12px',
+    background: 'rgba(0,0,0,0.5)',
+    backdropFilter: 'blur(4px)',
+    border: '1px solid rgba(255,255,255,0.4)',
+    borderRadius: 16,
+    color: '#fff',
+    fontSize: 13,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+  locateAddr: {
+    padding: '4px 8px',
+    background: 'rgba(0,0,0,0.55)',
+    backdropFilter: 'blur(4px)',
+    borderRadius: 8,
+    color: '#fff',
+    fontSize: 12,
+    whiteSpace: 'nowrap',
   },
   zoomGroup: {
     position: 'absolute',

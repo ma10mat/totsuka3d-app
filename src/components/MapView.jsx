@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const MOVE_SPEED = 0.000020; // ~2m / frame
+const MOVE_SPEED = 0.000010; // ~1m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
 
 // 建物の高さに応じた水色グラデーション
@@ -223,7 +223,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         const mc = maplibregl.MercatorCoordinate.fromLngLat(
           [center.lng, center.lat], ls.jumpHeight
         );
-        const scale = mc.meterInMercatorCoordinateUnits();
+        const scale = mc.meterInMercatorCoordinateUnits() * 3;
 
         // MapLibre公式パターン: translate → scale(Y反転) → rotateX(π/2)でThree.js Y軸を高度軸に合わせる
         const modelMat = new THREE.Matrix4()
@@ -315,7 +315,7 @@ function addBuildingLayer(map, source) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.5,
+      'fill-extrusion-opacity': 0.25,
     },
   }, firstLabel);
 }
@@ -342,7 +342,7 @@ function addOsmBuildings(map) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'render_height'], ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.5,
+      'fill-extrusion-opacity': 0.25,
     },
   }, firstLabel);
 }
