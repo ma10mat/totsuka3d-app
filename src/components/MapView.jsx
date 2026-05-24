@@ -228,7 +228,7 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         const mc = maplibregl.MercatorCoordinate.fromLngLat(
           [center.lng, center.lat], ls.jumpHeight
         );
-        const scale = mc.meterInMercatorCoordinateUnits() * 11; // ~20m (1.75m × 11)
+        const scale = mc.meterInMercatorCoordinateUnits() * 2.9; // ~5m (1.75m × 2.9)
 
         // MapLibre公式パターン: translate → scale(Y反転) → rotateX(π/2)でThree.js Y軸を高度軸に合わせる
         const modelMat = new THREE.Matrix4()
