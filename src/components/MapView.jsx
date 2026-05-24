@@ -142,6 +142,9 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
           `${import.meta.env.BASE_URL}Soldier.glb`,
           (gltf) => {
             ls.character = gltf.scene;
+            gltf.scene.traverse((child) => {
+              if (child.isMesh) child.material.color.set(0xcc0000);
+            });
             this._scene.add(gltf.scene);
 
             ls.mixer      = new THREE.AnimationMixer(gltf.scene);
