@@ -7,16 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 const MOVE_SPEED = 0.000010; // ~1m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
 
-// 建物の高さに応じた黄色グラデーション
-const BUILDING_COLOR = [
-  'interpolate', ['linear'],
-  ['coalesce', ['get', 'height'], 10],
-  0,   '#ffe066',
-  20,  '#ffd700',
-  50,  '#ffc200',
-  100, '#ffaa00',
-  200, '#ff8c00',
-];
+const BUILDING_COLOR = '#00ccff';
 
 export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady }) {
   const containerRef = useRef(null);
@@ -334,7 +325,7 @@ function addBuildingLayer(map, source) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.12,
+      'fill-extrusion-opacity': 0.18,
     },
   }, firstLabel);
 }
@@ -361,7 +352,7 @@ function addOsmBuildings(map) {
       'fill-extrusion-color':   BUILDING_COLOR,
       'fill-extrusion-height':  ['coalesce', ['get', 'render_height'], ['get', 'height'], 10],
       'fill-extrusion-base':    ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
-      'fill-extrusion-opacity': 0.12,
+      'fill-extrusion-opacity': 0.18,
     },
   }, firstLabel);
 }
