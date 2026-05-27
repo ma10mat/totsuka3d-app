@@ -5,3 +5,4 @@ dist/
 public/plateau-buildings.geojson
 *.zip
 screenshot*.png
+accident_data.txt

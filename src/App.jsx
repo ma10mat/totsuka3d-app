@@ -3,6 +3,7 @@ import MapView from './components/MapView';
 import Joystick from './components/Joystick';
 import AddressSearch from './components/AddressSearch';
 import SpotSelector from './components/SpotSelector';
+import { ACCIDENT_SPOTS } from './data/accidentData.js';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [
@@ -35,6 +36,8 @@ export default function App() {
   const joystickRef  = useRef({ x: 0, y: 0 }); // ジョイスティック現在値
 
   const [showSpots, setShowSpots] = useState(false);
+  const [showAccidents, setShowAccidents] = useState(false);
+  const [accidentInfo, setAccidentInfo] = useState(null);
   const [activeSpot, setActiveSpot] = useState(SPOTS[0]);
   const [loadingAddr, setLoadingAddr] = useState(false);
   const [currentAddress, setCurrentAddress] = useState(null);
@@ -130,14 +133,20 @@ export default function App() {
         joystickRef={joystickRef}
         onMapReady={handleMapReady}
         onCharacterReady={handleCharacterReady}
+        onAccidentClick={setAccidentInfo}
       />
 
       {/* 上部: タイトルバー */}
       <div style={styles.topBar}>
         <span style={styles.title}>戸塚3D探索</span>
-        <button style={styles.spotBtn} onClick={() => setShowSpots(v => !v)}>
-          📍 {activeSpot.name}
-        </button>
+        <div style={{ display: 'flex', gap: 6, pointerEvents: 'auto' }}>
+          <button style={styles.accidentBtn} onClick={() => { setShowAccidents(v => !v); setShowSpots(false); }}>
+            ⚠️ 死亡事故発生
+          </button>
+          <button style={styles.spotBtn} onClick={() => { setShowSpots(v => !v); setShowAccidents(false); }}>
+            📍 {activeSpot.name}
+          </button>
+        </div>
       </div>
 
       {/* スポットセレクター */}
@@ -148,6 +157,26 @@ export default function App() {
           onSelect={flyTo}
           onClose={() => setShowSpots(false)}
         />
+      )}
+
+      {/* 死亡事故スポット一覧 */}
+      {showAccidents && (
+        <div style={styles.accidentList}>
+          <div style={styles.accidentListHeader}>
+            <span>死亡事故発生一覧 ({ACCIDENT_SPOTS.length}件)</span>
+            <button style={styles.accidentListClose} onClick={() => setShowAccidents(false)}>✕</button>
+          </div>
+          {ACCIDENT_SPOTS.map((s) => (
+            <button key={s.id} style={styles.accidentListItem} onClick={() => {
+              mapRef.current?.flyTo({ center: s.center, zoom: 18, pitch: 70, duration: 1500 });
+              setShowAccidents(false);
+            }}>
+              <span style={{ fontSize: 12, color: 'rgba(255,200,200,0.9)' }}>{s.date}</span>
+              <span style={{ fontSize: 13, fontWeight: 'bold' }}>{s.location}</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,200,200,0.8)' }}>{s.type}</span>
+            </button>
+          ))}
+        </div>
       )}
 
       {/* 現在位置ボタン＋住所表示 (左上) */}
@@ -178,6 +207,20 @@ export default function App() {
       <div style={styles.joystickWrapper}>
         <Joystick onMove={handleJoystickMove} />
       </div>
+
+      {/* 事故情報カード */}
+      {accidentInfo && (
+        <div style={styles.accidentCard}>
+          <div style={styles.accidentCardInner}>
+            <div style={styles.accidentCardTitle}>{accidentInfo.date} {accidentInfo.location}</div>
+            <div style={styles.accidentCardType}>{accidentInfo.type}</div>
+            {accidentInfo.parties.map((p, i) => (
+              <div key={i} style={styles.accidentCardParty}>{p}</div>
+            ))}
+          </div>
+          <button style={styles.infoClose} onClick={() => setAccidentInfo(null)}>✕</button>
+        </div>
+      )}
 
       {/* PC 向け操作説明 */}
       <div style={styles.hint}>
@@ -295,6 +338,94 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     lineHeight: 1,
+  },
+  accidentBtn: {
+    padding: '6px 12px',
+    background: 'rgba(180,0,0,0.7)',
+    backdropFilter: 'blur(4px)',
+    border: '1px solid rgba(255,100,100,0.5)',
+    borderRadius: 20,
+    color: '#fff',
+    fontSize: 13,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+  accidentList: {
+    position: 'absolute',
+    top: 44,
+    right: 12,
+    width: 260,
+    background: 'rgba(120,0,0,0.92)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(255,100,100,0.4)',
+    borderRadius: 12,
+    overflow: 'hidden',
+    zIndex: 25,
+  },
+  accidentListHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 12px',
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 'bold',
+    borderBottom: '1px solid rgba(255,100,100,0.3)',
+  },
+  accidentListClose: {
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 16,
+    cursor: 'pointer',
+    padding: '0 4px',
+  },
+  accidentListItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 2,
+    width: '100%',
+    padding: '10px 12px',
+    background: 'none',
+    border: 'none',
+    borderBottom: '1px solid rgba(255,100,100,0.2)',
+    color: '#fff',
+    textAlign: 'left',
+    cursor: 'pointer',
+  },
+  accidentCard: {
+    position: 'absolute',
+    bottom: 36,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 8,
+    background: 'rgba(120,0,0,0.9)',
+    backdropFilter: 'blur(6px)',
+    border: '1px solid rgba(255,100,100,0.5)',
+    borderRadius: 12,
+    padding: '10px 14px',
+    zIndex: 30,
+    maxWidth: '90vw',
+  },
+  accidentCardInner: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3,
+  },
+  accidentCardTitle: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  accidentCardType: {
+    color: 'rgba(255,200,200,0.9)',
+    fontSize: 12,
+  },
+  accidentCardParty: {
+    color: 'rgba(255,220,220,0.85)',
+    fontSize: 12,
   },
   hint: {
     position: 'absolute',

@@ -3,13 +3,26 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { ACCIDENT_SPOTS } from '../data/accidentData.js';
 
 const MOVE_SPEED = 0.000010; // ~1m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
 
 const BUILDING_COLOR = '#00ccff';
 
-export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady }) {
+function makeCircle(center, radiusM, steps = 64) {
+  const [lng, lat] = center;
+  const dLat = radiusM / 111320;
+  const dLng = radiusM / (111320 * Math.cos(lat * Math.PI / 180));
+  const coords = [];
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * 2 * Math.PI;
+    coords.push([lng + Math.sin(a) * dLng, lat + Math.cos(a) * dLat]);
+  }
+  return { type: 'Polygon', coordinates: [coords] };
+}
+
+export default function MapView({ initialSpot, joystickRef, onMapReady, onCharacterReady, onAccidentClick }) {
   const containerRef = useRef(null);
   const mapRef       = useRef(null);
   const keysRef      = useRef(new Set());
@@ -276,6 +289,30 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
         })
         .catch(() => addOsmBuildings(map))
         .finally(() => {
+          // 死亡事故サークル (半径20m)
+          map.addSource('accident-circles', {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: ACCIDENT_SPOTS.map((s) => ({
+                type: 'Feature',
+                properties: { id: s.id },
+                geometry: makeCircle(s.center, 20),
+              })),
+            },
+          });
+          map.addLayer({ id: 'accident-circles-fill', type: 'fill', source: 'accident-circles',
+            paint: { 'fill-color': '#ff0000', 'fill-opacity': 0.18 } });
+          map.addLayer({ id: 'accident-circles-outline', type: 'line', source: 'accident-circles',
+            paint: { 'line-color': '#ff4444', 'line-width': 2, 'line-opacity': 0.7 } });
+          map.on('click', 'accident-circles-fill', (e) => {
+            const id = e.features[0]?.properties?.id;
+            const spot = ACCIDENT_SPOTS.find((s) => s.id === id);
+            if (spot && onAccidentClick) onAccidentClick(spot);
+          });
+          map.on('mouseenter', 'accident-circles-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'accident-circles-fill', () => { map.getCanvas().style.cursor = ''; });
+
           // 警察署・交番を赤色で表示
           map.addSource('police-buildings', { type: 'geojson', data: `${import.meta.env.BASE_URL}police-buildings.geojson` });
           map.addLayer({
