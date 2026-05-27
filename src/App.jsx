@@ -65,7 +65,7 @@ export default function App() {
       center:  spot.center,
       bearing: spot.bearing,
       pitch:   70,
-      zoom:    19,
+      zoom:    18,
       duration: 2000,
     });
   }, []);
