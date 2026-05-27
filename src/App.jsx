@@ -172,8 +172,8 @@ export default function App() {
               setShowAccidents(false);
             }}>
               <span style={{ fontSize: 12, color: 'rgba(255,200,200,0.9)' }}>{s.date}</span>
-              <span style={{ fontSize: 13, fontWeight: 'bold' }}>{s.location}</span>
-              <span style={{ fontSize: 11, color: 'rgba(255,200,200,0.8)' }}>{s.type}</span>
+              <span style={{ fontSize: 13, fontWeight: 'bold' }}>{s.type}</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,200,200,0.8)' }}>{s.location}</span>
             </button>
           ))}
         </div>
