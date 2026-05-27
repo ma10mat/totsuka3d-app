@@ -139,14 +139,9 @@ export default function App() {
       {/* 上部: タイトルバー */}
       <div style={styles.topBar}>
         <span style={styles.title}>戸塚3D探索</span>
-        <div style={{ display: 'flex', gap: 6, pointerEvents: 'auto' }}>
-          <button style={styles.accidentBtn} onClick={() => { setShowAccidents(v => !v); setShowSpots(false); }}>
-            ⚠️ 死亡事故発生
-          </button>
-          <button style={styles.spotBtn} onClick={() => { setShowSpots(v => !v); setShowAccidents(false); }}>
-            📍 {activeSpot.name}
-          </button>
-        </div>
+        <button style={styles.spotBtn} onClick={() => { setShowSpots(v => !v); setShowAccidents(false); }}>
+          📍 {activeSpot.name}
+        </button>
       </div>
 
       {/* スポットセレクター */}
@@ -158,6 +153,11 @@ export default function App() {
           onClose={() => setShowSpots(false)}
         />
       )}
+
+      {/* 死亡事故発生ボタン (左上) */}
+      <button style={styles.accidentBtn} onClick={() => { setShowAccidents(v => !v); setShowSpots(false); }}>
+        ⚠️ 死亡事故発生
+      </button>
 
       {/* 死亡事故スポット一覧 */}
       {showAccidents && (
@@ -340,6 +340,9 @@ const styles = {
     lineHeight: 1,
   },
   accidentBtn: {
+    position: 'absolute',
+    top: 44,
+    left: 12,
     padding: '6px 12px',
     background: 'rgba(180,0,0,0.7)',
     backdropFilter: 'blur(4px)',
@@ -349,11 +352,12 @@ const styles = {
     fontSize: 13,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    zIndex: 20,
   },
   accidentList: {
     position: 'absolute',
-    top: 44,
-    right: 12,
+    top: 82,
+    left: 12,
     width: 260,
     background: 'rgba(120,0,0,0.92)',
     backdropFilter: 'blur(8px)',
