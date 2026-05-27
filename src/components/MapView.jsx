@@ -46,17 +46,24 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
       if (dr) m.setBearing(m.getBearing() + dr);
 
       // 前後移動
+      const isRunning = Math.abs(joy.y) > 0.6;
       let fwd = joy.y;
       if (keys.has('w') || keys.has('W') || keys.has('ArrowUp'))   fwd += 1;
       if (keys.has('s') || keys.has('S') || keys.has('ArrowDown'))  fwd -= 1;
       if (fwd !== 0) {
         const rad = m.getBearing() * (Math.PI / 180);
         const { lng, lat } = m.getCenter();
+        const spd = isRunning ? MOVE_SPEED * 2.5 : MOVE_SPEED;
         m.setCenter([
-          lng + Math.sin(rad) * fwd * MOVE_SPEED,
-          lat + Math.cos(rad) * fwd * MOVE_SPEED,
+          lng + Math.sin(rad) * fwd * spd,
+          lat + Math.cos(rad) * fwd * spd,
         ]);
       }
+
+      // アニメーション
+      if (isRunning)      applyMovement('run');
+      else if (fwd !== 0) applyMovement('walk');
+      else                applyMovement('idle');
 
       rafRef.current = requestAnimationFrame(gameLoop);
     };
@@ -105,9 +112,20 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
     // ---- Three.js 状態 ----
     const ls = {
       character: null, mixer: null,
-      idleAction: null, walkAction: null,
+      idleAction: null, walkAction: null, runAction: null,
       jumpHeight: 0, isJumping: false, jumpStart: 0,
       lastTime: null,
+    };
+
+    // アニメーション切り替え (クロスフェード)
+    let _moveMode = 'idle';
+    const applyMovement = (mode) => {
+      if (mode === _moveMode) return;
+      const acts = { idle: ls.idleAction, walk: ls.walkAction, run: ls.runAction };
+      if (!acts.idle || !acts.walk || !acts.run) return;
+      acts[_moveMode].crossFadeTo(acts[mode], 0.2, true);
+      acts[mode].play();
+      _moveMode = mode;
     };
 
     // ---- Three.js カスタムレイヤー ----
@@ -149,14 +167,12 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
               clips[0];
             ls.idleAction = ls.mixer.clipAction(findClip('Idle'));
             ls.walkAction = ls.mixer.clipAction(findClip('Walk'));
+            ls.runAction  = ls.mixer.clipAction(findClip('Run'));
             ls.idleAction.play();
             m.triggerRepaint(); // ロード完了後すぐに描画開始
 
             onCharacterReady({
-              setWalking: (v) => {
-                if (v) { ls.idleAction?.stop(); ls.walkAction?.play(); }
-                else   { ls.walkAction?.stop(); ls.idleAction?.play(); }
-              },
+              setWalking: () => {},
               jump: () => {
                 if (ls.isJumping) return;
                 ls.isJumping = true;
