@@ -43,6 +43,9 @@ export default function App() {
   // ジョイスティック状態を共有参照に書き込む (再レンダリング不要)
   const handleJoystickMove = useCallback(({ x, y }) => {
     joystickRef.current = { x, y };
+    if (charControls.current) {
+      charControls.current.setWalking(Math.abs(y) > 0.1);
+    }
   }, []);
 
   const handleMapReady = useCallback((map) => {
