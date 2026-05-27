@@ -359,11 +359,12 @@ const styles = {
     top: 82,
     left: 12,
     width: 260,
+    maxHeight: '60vh',
     background: 'rgba(120,0,0,0.92)',
     backdropFilter: 'blur(8px)',
     border: '1px solid rgba(255,100,100,0.4)',
     borderRadius: 12,
-    overflow: 'hidden',
+    overflowY: 'auto',
     zIndex: 25,
   },
   accidentListHeader: {
