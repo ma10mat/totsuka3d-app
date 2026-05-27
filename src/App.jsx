@@ -212,10 +212,15 @@ export default function App() {
       {accidentInfo && (
         <div style={styles.accidentCard}>
           <div style={styles.accidentCardInner}>
-            <div style={styles.accidentCardTitle}>{accidentInfo.date} {accidentInfo.location}</div>
-            <div style={styles.accidentCardType}>{accidentInfo.type}</div>
-            {accidentInfo.parties.map((p, i) => (
-              <div key={i} style={styles.accidentCardParty}>{p}</div>
+            {accidentInfo.map((info, i) => (
+              <div key={info.id}>
+                {i > 0 && <div style={styles.accidentDivider} />}
+                <div style={styles.accidentCardTitle}>{info.date} {info.location}</div>
+                <div style={styles.accidentCardType}>{info.type}</div>
+                {info.parties.map((p, j) => (
+                  <div key={j} style={styles.accidentCardParty}>{p}</div>
+                ))}
+              </div>
             ))}
           </div>
           <button style={styles.infoClose} onClick={() => setAccidentInfo(null)}>✕</button>
@@ -431,6 +436,10 @@ const styles = {
   accidentCardParty: {
     color: 'rgba(255,220,220,0.85)',
     fontSize: 12,
+  },
+  accidentDivider: {
+    borderTop: '1px solid rgba(255,100,100,0.4)',
+    margin: '6px 0',
   },
   hint: {
     position: 'absolute',
