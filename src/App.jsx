@@ -153,7 +153,7 @@ export default function App() {
       {/* 現在位置ボタン＋住所表示 (左上) */}
       <div style={styles.locateBox}>
         <button style={styles.locateBtn} onClick={handleLocate} disabled={locating}>
-          {locating ? '取得中…' : '📍 住所確認'}
+          {locating ? '取得中…' : '📍 現在地確認'}
         </button>
         {currentAddress && (
           <span style={styles.locateAddr}>{currentAddress}</span>
@@ -244,10 +244,11 @@ const styles = {
   },
   locateBox: {
     position: 'absolute',
-    top: 52,
-    left: 12,
+    top: 94,
+    right: 12,
     display: 'flex',
     flexDirection: 'column',
+    alignItems: 'flex-end',
     gap: 4,
     zIndex: 20,
   },
