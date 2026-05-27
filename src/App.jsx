@@ -179,7 +179,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 現在位置ボタン＋住所表示 (左上) */}
+      {/* 現在位置ボタン＋住所表示 (右上) */}
       <div style={styles.locateBox}>
         <button style={styles.locateBtn} onClick={handleLocate} disabled={locating}>
           {locating ? '取得中…' : '📍 現在地確認'}
