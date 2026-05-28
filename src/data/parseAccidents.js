@@ -25,4 +25,5 @@ function parse(txt) {
     .filter(Boolean)
 }
 
-export const ACCIDENT_SPOTS = parse(import.meta.env.VITE_ACCIDENT_DATA || '')
+// __ACCIDENT_DATA__ is injected at build time by vite.config.js define
+export const ACCIDENT_SPOTS = parse(typeof __ACCIDENT_DATA__ !== 'undefined' ? __ACCIDENT_DATA__ : '')
