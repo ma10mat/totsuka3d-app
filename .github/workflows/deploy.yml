@@ -26,9 +26,10 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: printf '%s' "$ACCIDENT_DATA" > accident_data.txt
         env:
-          VITE_ACCIDENT_DATA: ${{ secrets.ACCIDENT_DATA }}
+          ACCIDENT_DATA: ${{ secrets.ACCIDENT_DATA }}
+      - run: npm run build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
