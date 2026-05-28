@@ -306,9 +306,9 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
           map.addLayer({ id: 'accident-circles-outline', type: 'line', source: 'accident-circles',
             paint: { 'line-color': '#ff4444', 'line-width': 2, 'line-opacity': 0.7 } });
           map.on('click', 'accident-circles-fill', (e) => {
-            const ids = e.features.map((f) => f.properties?.id).filter(Boolean);
-            const spots = ACCIDENT_SPOTS.filter((s) => ids.includes(s.id));
-            if (spots.length && onAccidentClick) onAccidentClick(spots);
+            const id = e.features[0]?.properties?.id;
+            const spot = ACCIDENT_SPOTS.find((s) => s.id === id);
+            if (spot && onAccidentClick) onAccidentClick(spot);
           });
           map.on('mouseenter', 'accident-circles-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
           map.on('mouseleave', 'accident-circles-fill', () => { map.getCanvas().style.cursor = ''; });

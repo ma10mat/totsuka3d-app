@@ -6,4 +6,3 @@ public/plateau-buildings.geojson
 *.zip
 screenshot*.png
 accident_data.txt
-src/data/accidentData.js

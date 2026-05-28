@@ -139,9 +139,14 @@ export default function App() {
       {/* 上部: タイトルバー */}
       <div style={styles.topBar}>
         <span style={styles.title}>戸塚3D探索</span>
-        <button style={styles.spotBtn} onClick={() => { setShowSpots(v => !v); setShowAccidents(false); }}>
-          📍 {activeSpot.name}
-        </button>
+        <div style={{ display: 'flex', gap: 6, pointerEvents: 'auto' }}>
+          <button style={styles.accidentBtn} onClick={() => { setShowAccidents(v => !v); setShowSpots(false); }}>
+            ⚠️ 死亡事故発生
+          </button>
+          <button style={styles.spotBtn} onClick={() => { setShowSpots(v => !v); setShowAccidents(false); }}>
+            📍 {activeSpot.name}
+          </button>
+        </div>
       </div>
 
       {/* スポットセレクター */}
@@ -153,11 +158,6 @@ export default function App() {
           onClose={() => setShowSpots(false)}
         />
       )}
-
-      {/* 死亡事故発生ボタン (左上) */}
-      <button style={styles.accidentBtn} onClick={() => { setShowAccidents(v => !v); setShowSpots(false); }}>
-        ⚠️ 死亡事故発生
-      </button>
 
       {/* 死亡事故スポット一覧 */}
       {showAccidents && (
@@ -172,14 +172,14 @@ export default function App() {
               setShowAccidents(false);
             }}>
               <span style={{ fontSize: 12, color: 'rgba(255,200,200,0.9)' }}>{s.date}</span>
-              <span style={{ fontSize: 13, fontWeight: 'bold' }}>{s.type}</span>
-              <span style={{ fontSize: 11, color: 'rgba(255,200,200,0.8)' }}>{s.location}</span>
+              <span style={{ fontSize: 13, fontWeight: 'bold' }}>{s.location}</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,200,200,0.8)' }}>{s.type}</span>
             </button>
           ))}
         </div>
       )}
 
-      {/* 現在位置ボタン＋住所表示 (右上) */}
+      {/* 現在位置ボタン＋住所表示 (左上) */}
       <div style={styles.locateBox}>
         <button style={styles.locateBtn} onClick={handleLocate} disabled={locating}>
           {locating ? '取得中…' : '📍 現在地確認'}
@@ -212,15 +212,10 @@ export default function App() {
       {accidentInfo && (
         <div style={styles.accidentCard}>
           <div style={styles.accidentCardInner}>
-            {accidentInfo.map((info, i) => (
-              <div key={info.id}>
-                {i > 0 && <div style={styles.accidentDivider} />}
-                <div style={styles.accidentCardTitle}>{info.date} {info.location}</div>
-                <div style={styles.accidentCardType}>{info.type}</div>
-                {info.parties.map((p, j) => (
-                  <div key={j} style={styles.accidentCardParty}>{p}</div>
-                ))}
-              </div>
+            <div style={styles.accidentCardTitle}>{accidentInfo.date} {accidentInfo.location}</div>
+            <div style={styles.accidentCardType}>{accidentInfo.type}</div>
+            {accidentInfo.parties.map((p, i) => (
+              <div key={i} style={styles.accidentCardParty}>{p}</div>
             ))}
           </div>
           <button style={styles.infoClose} onClick={() => setAccidentInfo(null)}>✕</button>
@@ -345,9 +340,6 @@ const styles = {
     lineHeight: 1,
   },
   accidentBtn: {
-    position: 'absolute',
-    top: 44,
-    left: 12,
     padding: '6px 12px',
     background: 'rgba(180,0,0,0.7)',
     backdropFilter: 'blur(4px)',
@@ -357,19 +349,17 @@ const styles = {
     fontSize: 13,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    zIndex: 20,
   },
   accidentList: {
     position: 'absolute',
-    top: 82,
-    left: 12,
+    top: 44,
+    right: 12,
     width: 260,
-    maxHeight: '60vh',
     background: 'rgba(120,0,0,0.92)',
     backdropFilter: 'blur(8px)',
     border: '1px solid rgba(255,100,100,0.4)',
     borderRadius: 12,
-    overflowY: 'auto',
+    overflow: 'hidden',
     zIndex: 25,
   },
   accidentListHeader: {
@@ -436,10 +426,6 @@ const styles = {
   accidentCardParty: {
     color: 'rgba(255,220,220,0.85)',
     fontSize: 12,
-  },
-  accidentDivider: {
-    borderTop: '1px solid rgba(255,100,100,0.4)',
-    margin: '6px 0',
   },
   hint: {
     position: 'absolute',
