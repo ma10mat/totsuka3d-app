@@ -7,13 +7,13 @@ import { ACCIDENT_SPOTS } from './data/parseAccidents.js';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [
-  { id: 'totsuka',    name: '警視庁戸塚警察署',     center: [139.7106, 35.7133], bearing: 90  },
-  { id: 'takadanobaba', name: '高田馬場駅前交番',   center: [139.7043, 35.7129], bearing: 0   },
-  { id: 'totsuka1',   name: '戸塚一丁目交番',       center: [139.7189, 35.7120], bearing: 0   },
-  { id: 'shimo-mae',  name: '下落合駅前交番',       center: [139.6945, 35.7170], bearing: 0   },
-  { id: 'naka',       name: '中落合交番',           center: [139.6852, 35.7205], bearing: 0   },
-  { id: 'nishi',      name: '西落合交番',           center: [139.6795, 35.7231], bearing: 0   },
-  { id: 'shimo3',     name: '下落合三丁目駐在所',   center: [139.7043, 35.7203], bearing: 0   },
+  { id: 'totsuka',      name: '警視庁戸塚警察署',   center: [139.7106658, 35.7132584], bearing: 90 },
+  { id: 'takadanobaba', name: '高田馬場駅前交番',   center: [139.7045020, 35.7129448], bearing: 0  },
+  { id: 'totsuka1',     name: '戸塚一丁目交番',     center: [139.7187053, 35.7120169], bearing: 0  },
+  { id: 'shimo-mae',    name: '下落合駅前交番',     center: [139.6944974, 35.7169942], bearing: 0  },
+  { id: 'naka',         name: '中落合交番',         center: [139.6851901, 35.7204979], bearing: 0  },
+  { id: 'nishi',        name: '西落合交番',         center: [139.6794804, 35.7231240], bearing: 0  },
+  { id: 'shimo3',       name: '下落合三丁目駐在所', center: [139.7041604, 35.7202915], bearing: 0  },
 ];
 
 // GSI muniCd (5桁) → 市区町村名
