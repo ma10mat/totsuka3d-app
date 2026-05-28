@@ -3,7 +3,7 @@ import MapView from './components/MapView';
 import Joystick from './components/Joystick';
 import AddressSearch from './components/AddressSearch';
 import SpotSelector from './components/SpotSelector';
-import { ACCIDENT_SPOTS } from './data/accidentData.js';
+import { ACCIDENT_SPOTS } from './data/parseAccidents.js';
 
 // 新宿区の主要スポット (スタート: 戸塚警察署前)
 export const SPOTS = [

@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { ACCIDENT_SPOTS } from '../data/accidentData.js';
+import { ACCIDENT_SPOTS } from '../data/parseAccidents.js';
 
 const MOVE_SPEED = 0.000010; // ~1m / frame
 const ROT_SPEED  = 2.0;      // °  / frame
