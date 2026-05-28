@@ -26,7 +26,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: printf '%s' "$ACCIDENT_DATA" > accident_data.txt
+      - run: node -e "require('fs').writeFileSync('accident_data.txt', process.env.ACCIDENT_DATA || '')"
         env:
           ACCIDENT_DATA: ${{ secrets.ACCIDENT_DATA }}
       - run: npm run build
