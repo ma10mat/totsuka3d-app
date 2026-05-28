@@ -39,7 +39,9 @@ export default function MapView({ initialSpot, joystickRef, onMapReady, onCharac
       bearing:    initialSpot.bearing,
       antialias:  false,
       maxPitch:   80,
+      attributionControl: false,
     });
+    map.addControl(new maplibregl.AttributionControl({ compact: true }));
 
     mapRef.current = map;
 
